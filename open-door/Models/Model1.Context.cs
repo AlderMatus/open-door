@@ -27,5 +27,6 @@ namespace open_door.Models
     
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Access> Accesses { get; set; }
+        public virtual DbSet<ProfileType> ProfileTypes { get; set; }
     }
 }

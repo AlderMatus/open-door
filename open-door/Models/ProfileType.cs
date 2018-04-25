@@ -12,25 +12,18 @@ namespace open_door.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class ProfileType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public User()
+        public ProfileType()
         {
-            this.Accesses = new HashSet<Access>();
+            this.Users = new HashSet<User>();
         }
     
-        public int Id { get; set; }
-        public string email { get; set; }
-        public string token { get; set; }
-        public bool is_active { get; set; }
+        public short Id { get; set; }
         public string name { get; set; }
-        public string last_name { get; set; }
-        public Nullable<System.DateTime> signup_date { get; set; }
-        public short profileType_id { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Access> Accesses { get; set; }
-        public virtual ProfileType ProfileType { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

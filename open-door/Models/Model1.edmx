@@ -4,51 +4,76 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="doorAccessModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Accesses">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="user_id" Type="int" Nullable="false" />
-          <Property Name="status" Type="tinyint" Nullable="false" />
-          <Property Name="descripcion" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="access_date" Type="date" Nullable="false" />
-          <Property Name="access_time" Type="time" Precision="7" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Users">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="email" Type="nvarchar" MaxLength="60" Nullable="false" />
-          <Property Name="name" Type="nvarchar" MaxLength="60" Nullable="false" />
-          <Property Name="last_name" Type="nvarchar" MaxLength="90" Nullable="false" />
-          <Property Name="singup_date" Type="date" />
-          <Property Name="token" Type="nchar" MaxLength="20" />
-          <Property Name="is_active" Type="bit" Nullable="false" />
-        </EntityType>
-        <Association Name="FK_UserAccess">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
-          <End Role="Accesses" Type="Self.Accesses" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Accesses">
-              <PropertyRef Name="user_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="doorAccessModelStoreContainer">
-          <EntitySet Name="Accesses" EntityType="Self.Accesses" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_UserAccess" Association="Self.FK_UserAccess">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="Accesses" EntitySet="Accesses" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema></edmx:StorageModels>
+    <Schema Namespace="doorAccessModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="doorAccessModelStoreContainer">
+    <EntitySet Name="Users" EntityType="doorAccessModel.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Accesses" EntityType="doorAccessModel.Store.Accesses" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ProfileTypes" EntityType="doorAccessModel.Store.ProfileTypes" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="UserAccess" Association="doorAccessModel.Store.UserAccess">
+      <End Role="Access" EntitySet="Accesses" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="UserProfileType" Association="doorAccessModel.Store.UserProfileType">
+      <End Role="User" EntitySet="Users" />
+      <End Role="ProfileType" EntitySet="ProfileTypes" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="email" Type="nvarchar" Nullable="false" MaxLength="60" />
+    <Property Name="token" Type="nchar" Nullable="true" MaxLength="20" />
+    <Property Name="is_active" Type="bit" Nullable="false" />
+    <Property Name="name" Type="nvarchar" Nullable="false" MaxLength="60" />
+    <Property Name="last_name" Type="nvarchar" Nullable="false" MaxLength="90" />
+    <Property Name="signup_date" Type="datetime" Nullable="true" />
+    <Property Name="profileType_id" Type="smallint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Accesses">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="user_id" Type="int" Nullable="false" />
+    <Property Name="status" Type="tinyint" Nullable="false" />
+    <Property Name="descripcion" Type="nvarchar" Nullable="false" MaxLength="150" />
+    <Property Name="access_date" Type="datetime" Nullable="false" />
+    <Property Name="access_time" Type="time" Nullable="false" Precision="7" />
+  </EntityType>
+  <EntityType Name="ProfileTypes">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="smallint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <Association Name="UserAccess">
+    <End Role="Access" Type="doorAccessModel.Store.Accesses" Multiplicity="*" />
+    <End Role="User" Type="doorAccessModel.Store.Users" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Access">
+        <PropertyRef Name="user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserProfileType">
+    <End Role="User" Type="doorAccessModel.Store.Users" Multiplicity="*" />
+    <End Role="ProfileType" Type="doorAccessModel.Store.ProfileTypes" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="ProfileType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User">
+        <PropertyRef Name="profileType_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="doorAccessModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -63,7 +88,9 @@
           <NavigationProperty Name="Accesses" Relationship="doorAccessModel.UserAccess" FromRole="User" ToRole="Access" />
           <Property Name="name" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="last_name" Type="String" Nullable="false" MaxLength="90" FixedLength="false" Unicode="true" />
-          <Property Name="singup_date" Type="DateTime" Precision="0" />
+          <Property Name="signup_date" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="ProfileType" Relationship="doorAccessModel.UserProfileType" FromRole="User" ToRole="ProfileType" />
+          <Property Name="profileType_id" Type="Int16" Nullable="false" />
         </EntityType>
         <EntityContainer Name="doorAccessEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Users" EntityType="Self.User" />
@@ -71,6 +98,11 @@
           <AssociationSet Name="UserAccess" Association="doorAccessModel.UserAccess">
             <End Role="Access" EntitySet="Accesses" />
             <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <EntitySet Name="ProfileTypes" EntityType="doorAccessModel.ProfileType" />
+          <AssociationSet Name="UserProfileType" Association="doorAccessModel.UserProfileType">
+            <End Role="User" EntitySet="Users" />
+            <End Role="ProfileType" EntitySet="ProfileTypes" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Access">
@@ -97,6 +129,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ProfileType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int16" />
+          <Property Name="name" Nullable="false" Type="String" />
+          <NavigationProperty Name="Users" Relationship="doorAccessModel.UserProfileType" FromRole="ProfileType" ToRole="User" />
+        </EntityType>
+        <Association Name="UserProfileType">
+          <End Type="doorAccessModel.User" Role="User" Multiplicity="*" />
+          <End Type="doorAccessModel.ProfileType" Role="ProfileType" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="ProfileType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User">
+              <PropertyRef Name="profileType_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -112,7 +164,8 @@
           <ScalarProperty Name="is_active" ColumnName="is_active" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="last_name" ColumnName="last_name" />
-          <ScalarProperty Name="singup_date" ColumnName="singup_date" />
+          <ScalarProperty Name="signup_date" ColumnName="signup_date" />
+          <ScalarProperty Name="profileType_id" ColumnName="profileType_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -125,6 +178,14 @@
           <ScalarProperty Name="descripcion" ColumnName="descripcion" />
           <ScalarProperty Name="access_date" ColumnName="access_date" />
           <ScalarProperty Name="access_time" ColumnName="access_time" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProfileTypes">
+      <EntityTypeMapping TypeName="IsTypeOf(doorAccessModel.ProfileType)">
+        <MappingFragment StoreEntitySet="ProfileTypes">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="name" ColumnName="name" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
