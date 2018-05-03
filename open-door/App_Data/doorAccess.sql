@@ -48,7 +48,7 @@ GO
 CREATE TABLE [dbo].[Users] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [email] nvarchar(60)  NOT NULL,
-    [token] nchar(20)  NULL,
+    [token] nvarchar(20)  NULL,
     [is_active] bit  NOT NULL,
     [name] nvarchar(60)  NOT NULL,
     [last_name] nvarchar(90)  NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE [dbo].[Accesses] (
     [user_id] int  NOT NULL,
     [status] tinyint  NOT NULL,
     [descripcion] nvarchar(150)  NOT NULL,
-    [access_date] datetime  NOT NULL,
+    [access_date] date  NOT NULL,
     [access_time] time  NOT NULL
 );
 GO
