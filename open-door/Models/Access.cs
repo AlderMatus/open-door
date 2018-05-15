@@ -20,6 +20,7 @@ namespace open_door.Models
         public string descripcion { get; set; }
         public System.DateTime access_date { get; set; }
         public System.TimeSpan access_time { get; set; }
+        public bool served { get; set; }
     
         public virtual User User { get; set; }
     }

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -18,7 +21,7 @@ namespace open_door.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("login/{email}/{token}")]
-        public IHttpActionResult login(String email, String token)
+        public IHttpActionResult Login(String email, String token)
         {
             // Validate email format
 
@@ -97,6 +100,7 @@ namespace open_door.Controllers
             a.access_date = DateTime.Now.Date;
             a.access_time = DateTime.Now.TimeOfDay;
             a.user_id = x.Id;
+            a.served = false;
 
             // Makes sure the user found is active
             if ( !x.is_active )
@@ -135,8 +139,71 @@ namespace open_door.Controllers
             a.descripcion = "Success";
             cnx.Accesses.Add(a);
             cnx.SaveChanges();
-            // {open-door()} here the door should open
+            
             return Ok(new { response = "Success", number = 2, detail = "The door is open", profile = x.ProfileType.name });
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("serve")]
+        public IHttpActionResult Serve()
+        {
+            DateTime maxRng = DateTime.Now;
+            DateTime minRng = maxRng.AddMinutes(-2);
+            string resp = "";
+            string cipher = "";
+
+            var x = ( from a in cnx.Accesses
+                     where !a.served && a.status.Equals(1) && (a.access_date <= maxRng.Date && a.access_time <= maxRng.TimeOfDay)
+                     && (a.access_date >= minRng.Date && a.access_time >= minRng.TimeOfDay)
+                     select a ).FirstOrDefault();
+
+            if ( x != null )
+            {
+                x.served = true;
+                cnx.SaveChanges();
+                resp = "1-" + maxRng.Year.ToString() + (maxRng.Month < 10? "0" : "") + maxRng.Month.ToString() + (maxRng.Day < 10 ? "0" : "") + maxRng.Day.ToString() + (maxRng.Hour < 10 ? "0" : "") + maxRng.Hour.ToString() + (maxRng.Minute < 10 ? "0" : "") + maxRng.Minute.ToString() + (maxRng.Second < 10 ? "0" : "") + maxRng.Second.ToString();
+                cipher = Encrypt(resp);
+                //  positive response
+                return Ok(new { response = cipher });
+            }
+            resp = "0-" + maxRng.Year.ToString() + (maxRng.Month < 10 ? "0" : "") + maxRng.Month.ToString() + (maxRng.Day < 10 ? "0" : "") + maxRng.Day.ToString() + (maxRng.Hour < 10 ? "0" : "") + maxRng.Hour.ToString() + (maxRng.Minute < 10 ? "0" : "") + maxRng.Minute.ToString() + (maxRng.Second < 10 ? "0" : "") + maxRng.Second.ToString();
+            cipher = Encrypt(resp);
+
+            //  negative response
+            return Ok(new { response = cipher });
+        }
+
+        private static string Encrypt(string message)
+        {
+            byte[] result;
+
+            using (AesCryptoServiceProvider provider = new AesCryptoServiceProvider() )
+            {
+                if (provider.IV == null || provider.IV.Length <= 0)
+                {
+                    provider.GenerateIV();
+                }
+
+                provider.Key = SHA256.Create().ComputeHash( Encoding.UTF8.GetBytes( "N57D00R5417" ) );
+
+                ICryptoTransform crypto = provider.CreateEncryptor( provider.Key, provider.IV );
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using ( CryptoStream csEncrypt = new CryptoStream( msEncrypt, crypto, CryptoStreamMode.Write ) )
+                    {
+                        using ( StreamWriter swEncrypt = new StreamWriter(csEncrypt) )
+                        {
+                            swEncrypt.Write( message );
+                        }
+                        result = new byte[ provider.IV.Length + msEncrypt.ToArray().Length ];
+                        System.Buffer.BlockCopy(provider.IV, 0, result, 0, provider.IV.Length);
+                        System.Buffer.BlockCopy(msEncrypt.ToArray(), 0, result, provider.IV.Length, msEncrypt.ToArray().Length);
+                    }
+                }
+                return Encoding.Default.GetString( result );
+            }
         }
     }
 }

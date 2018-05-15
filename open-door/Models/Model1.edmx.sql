@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/24/2018 15:26:27
+-- Date Created: 05/11/2018 09:26:03
 -- Generated from EDMX file: C:\Users\aldo.matus\Documents\VSProjects\OpenDoor\open-door\open-door\Models\Model1.edmx
 -- --------------------------------------------------
 
@@ -28,14 +28,14 @@ GO
 -- Dropping existing tables
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Users];
-GO
 IF OBJECT_ID(N'[dbo].[Accesses]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Accesses];
 GO
 IF OBJECT_ID(N'[dbo].[ProfileTypes]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ProfileTypes];
+GO
+IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Users];
 GO
 
 -- --------------------------------------------------
@@ -46,7 +46,7 @@ GO
 CREATE TABLE [dbo].[Users] (
     [Id] int  NOT NULL,
     [email] nvarchar(60)  NOT NULL,
-    [token] nchar(20)  NULL,
+    [token] nvarchar(20)  NULL,
     [is_active] bit  NOT NULL,
     [name] nvarchar(60)  NOT NULL,
     [last_name] nvarchar(90)  NOT NULL,
@@ -62,7 +62,8 @@ CREATE TABLE [dbo].[Accesses] (
     [status] tinyint  NOT NULL,
     [descripcion] nvarchar(150)  NOT NULL,
     [access_date] datetime  NOT NULL,
-    [access_time] time  NOT NULL
+    [access_time] time  NOT NULL,
+    [served] bit  NOT NULL
 );
 GO
 

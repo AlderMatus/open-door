@@ -65,7 +65,8 @@ CREATE TABLE [dbo].[Accesses] (
     [status] tinyint  NOT NULL,
     [descripcion] nvarchar(150)  NOT NULL,
     [access_date] date  NOT NULL,
-    [access_time] time  NOT NULL
+    [access_time] time  NOT NULL,
+	[served] bit  NOT NULL
 );
 GO
 
