@@ -84,7 +84,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="email" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="token" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="token" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="is_active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Accesses" Relationship="doorAccessModel.UserAccess" FromRole="User" ToRole="Access" />
           <Property Name="name" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />

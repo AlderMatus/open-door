@@ -46,7 +46,7 @@ GO
 CREATE TABLE [dbo].[Users] (
     [Id] int  NOT NULL,
     [email] nvarchar(60)  NOT NULL,
-    [token] nvarchar(20)  NULL,
+    [token] nvarchar(50)  NULL,
     [is_active] bit  NOT NULL,
     [name] nvarchar(60)  NOT NULL,
     [last_name] nvarchar(90)  NOT NULL,
